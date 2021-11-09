@@ -1,0 +1,48 @@
+GlobalLakeDepth.dat - provides the gridded data of the external parameters fields, 
+namely the lake depth (mean lake depth and bathymetry data).
+
+
+ECOCLIMAP2 is used as a land cover dataset for lake masking.
+Lake depth information consists only of freshwater lakes, and includes:
+-- measured mean lake depths (for all around the world);
+-- measured lake bathemetry for 36 large lakes;
+-- evaluated by different methods most probable mean lake depths (only for boreal 
+   zone);
+-- in absence of any above mentioned information lake depth is given value 10 meters.
+For more detailed information about: 
+-- list of 36 lakes with bathemetry data - please see LrgeLakesIncluded.txt file; 
+-- different methods used to evaluate most probable mean lake depths - please see a 
+   peer-reviewed paper mentioned below, that serves as a scientific documantation 
+   of GLDBv2, or "frequently asked questions" published on the FLake webpage.
+  
+  
+An example of opening the binary file in FORTRAN90:
+-- open(1, file = 'GlobalLakeDepth.dat', form='unformatted', access='direct', recl=2)
+
+An example of reading the binary file in FORTRAN90:
+-- read(1,rec=n) LakeDepth
+-- where: n - record number, INTEGER(8);
+          LakeDepth - mean lake depth in decimeters, INTEGER(2).
+          
+          
+Information about the binary file:
+-- byte order - little endian;
+-- form - simple binary;
+-- resolution - 30 arc. sec;
+-- coordinate system: geography;
+-- dimension of the array - 43200 X 21600 (longitude X latitude);
+-- longitude (-180,+180), latitude (+90,-90);
+-- start of the records - Northern Pole (+90 latitude), -180 longitude.
+
+Information about the pixel:
+-- units - decimeters;
+-- values are written as INTEGER(2);
+-- pixel size - (1/120) X (1/120), in degrees of longitude and latitude;
+-- pixel coordinates are given for the lower right corner.
+
+
+
+A peer-reviewed paper, that serves as a scientific documantation of GLDBv2: 
+Choulga, M., E. Kourzeneva, E. Zakharova, and A. Doganovsky, 2014. Estimation of 
+the mean depth of boreal lakes for use in numerical weather prediction and climate 
+modeling. Tellus A, 66, 21295, http://dx.doi.org/10.3402/tellusa.v66.21295

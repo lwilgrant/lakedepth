@@ -1,0 +1,92 @@
+Global Lake Database, version 2 (GLDBv2).
+Lake-Depth Data Set, lakes with bathymetry.
+April 2014. 
+
+Developed by Ekatherina Kourzeneva, kourzeneva_at_rshu.ru, and Margarita Choulga, botan4ik_at_hotmail.com. 
+
+The present "Large Lake With Bathymetry" contains the list of lakes 
+for which a detailed bathymetric information is available. 
+
+Great lakes (data from ETOPO1) ----------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------
+Name         Country            Area         LON        LAT     Mean depth   Max. depth Reference
+                               km**2                                m           m
+  
+Superior      Canada          82367.0      47.700    -87.500      148.1        406.0        1 
+Huron         Canada          59570.0      44.800    -82.400       59.4        228.0        1
+Michigan         USA          58016.0      44.000    -87.000       83.9        281.0        1
+Erie          Canada          25821.0      42.200    -81.200       17.7         64.0        1
+Ontario       Canada          19009.0      43.700    -77.900       86.3        224.0        1
+Saint_Clair   Canada           1113.0      42.467    -82.667        3.6          6.0        1
+
+------------------------------------------------------------------------------------------------------
+
+Large lakes (data digitised from different topographic maps) -----------------------------------------
+------------------------------------------------------------------------------------------------------
+Name         Country            Area         LON        LAT     Mean depth   Max. depth Reference
+                               km**2 
+                                                                    m           m
+
+Victoria    Tanzania         68800.0       -1.000     33.000       40.0         84.0        2
+Great_Bear    Canada         31153.0       66.000   -121.000       71.9        446.0        2
+Great_Slave   Canada         28568.0       61.667   -114.000       41.0        614.0        3
+Winnipeg      Canada         23750.0       52.117    -97.250       12.0         36.0        2
+Balkhash  Kazakhstan         18200.0       46.306     74.360        5.8         26.5        2
+Ladoga        Russia         17700.0       61.383     30.950       51.0        230.0        4
+Onego         Russia          9690.0       61.691     35.573       30.0        120.0        5
+Athabasca     Canada          7900.0       59.257   -109.450       20.0        120.0        6
+Kujbishevskoe Russia          6150.0       53.444     49.452        9.3         44.0        2
+Vanern        Sweden          5648.0       58.903     13.595       27.0        106.0        5        
+Bratskoe1     Russia         |5450.0       56.250    101.750      |21.0      |9999.0        2
+Bratskoe2     Russia         |             53.866    103.267      |          |              2
+Albert         Zaira          5300.0        1.683     30.917       25.0         58.0        2
+Taymyr        Russia          4560.0       74.543    101.644        2.8         26.0        7       
+Rybinskoe     Russia          4550.0       58.393     38.375        5.6         30.4        5
+Chudskoe      Russia         |3512.0       58.683     27.483      | 7.1      |  16.6        5
+Pskovskoe     Russia         |             58.065     27.905      |          |              5
+Edward         Zaira          2325.0       -0.333     29.600       17.0        112.0        2
+UstIlimskoe   Russia          1873.0       57.467    102.383       32.0         91.0        2
+Vattern       Sweden          1856.0       58.320     14.560       39.9        128.0        2
+Sevan        Armenia          1250.0       40.317     45.350       27.4         80.2        8
+Malaren       Sweden          1140.0       59.520     17.030       11.9         61.0        2
+Champlain        USA          1130.0       44.533    -73.333       19.5        132.0        9
+Beloe         Russia          1125.0       60.167     37.633        5.5         33.0       10
+St_Jean       Canada          1053.0       48.600    -72.083       11.3         63.1        2
+Biwa           Japan           674.0       35.333    136.167       41.0        104.0        2
+Hjalmaren     Sweden           478.0       59.220     15.770        6.1         22.0        2
+Pyramid          USA           453.0       40.062   -119.564       59.6        105.0        2
+Lough_Neagh       UK           381.8       54.618     -6.395        9.0         25.0        2
+Skadar       Albania           372.3       42.167     19.317        5.0          8.3        2
+
+-------------------------------------------------------------------------------------------------------
+
+
+1.  Amante, C. and B.W. Eakins, 2009: 
+    ETOPO1 1 Arc-Minute Global Relief Model: Procedures, Sata Sources and Analysis.
+    NOAA Technical Memorandum NESDIS NGDC-24, 2009-3, 1-19.
+    http://www.ngdc.noaa.gov/mgg/global/global.html 
+2.  ILEC: International Lake Invironmental Committee, 1988-1993.
+    Survey of the State of World Lakes. 
+    Data books of the world lake environments, vols. 1-5. 
+    ILEC/UNEP Publications, Otsu, Japan.
+    http://wldb.ilec.or.jp/
+3.  Schertzer, W.M., W.R.Rouse, P.D. Blanken, A.E. Walker, 2003:
+    Over-Lake Meteorology and Estimated Bulk Heat Exchange of Great Slave Lake in 1998 and 1999.
+    J. Hydrometeorol., 4, 649-659.
+4.  Andreev P., Hydrometcenter of Sanct-Petersburg, 2009, personal communication.
+5.  Navigation maps issued by Navigation and Oceanographic Administration 
+    of Defence Ministry of Russian Federation
+    http://www.navytech.ru
+6.  Atlas of Alberta Lakes
+    http://sunsite.ualberta.ca/Projects/Alberta-Lakes/library/view_section.php?lake=18&section=2&type=Fig
+7.  Fiziko-Geograficheskiy Atlas Mira (The Physio-Geographical World Atlas), 1964: 
+    Academy of Science and Federal Service of Geodesy and Cartography of USSR, 298 (in Russian).
+8.  Babayan A., S. Hakobyan, K. Jenderedjian, S. Muradyan, M. Voskanov, 2006:
+    Lake Sevan, Experience and Lessons Learned Brief.
+    Lake Basin Management Initiative, 347-362.
+    http://www.ilec.or.jp/eg/lbmi/pdf/21_Lake_Sevan_27February2006.pdf
+9.  Lake Champlain Basin Atlas
+    http://www.lcbp.org/atlas/index.htm
+10. Topographic map p37-135-136-(1986), p-37-135-136-(1986)
+    http://poehali.org/maps
+
