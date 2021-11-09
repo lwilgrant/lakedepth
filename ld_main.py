@@ -109,11 +109,7 @@ letters = ['a', 'b', 'c',
 # get data 
 #==============================================================================
 
-# lake depths
-# os.chdir(sfDIR)
-# ldeps = gp.read_file('glwd_2.shp')
-# ldeps = ldeps.loc[ldeps['TYPE'] == 'Lake']
-# ldeps
+# lake depths from GLDB
 os.chdir(txtDIR)
 ldeps = pd.read_csv('FreshWaterLakeDepthDataSet_v2_noheader.txt',
                     delim_whitespace=True,
@@ -121,16 +117,12 @@ ldeps = pd.read_csv('FreshWaterLakeDepthDataSet_v2_noheader.txt',
                     names=['Lat','Lon','Mean (m)','Max (m)','Surface_area (km**2)','International_name','National_name','Country'],
                     index_col=False,
                     encoding='iso-8859-1')
-# ldeps = ldeps[ldeps['Mean (m)'] != str(9999.0)]
-# ldeps = ldeps[ldeps['Max (m)'] != str(9999.0)]
 for col in ['Lat','Lon','Mean (m)','Max (m)','Surface_area (km**2)']:
     ldeps[col] = pd.to_numeric(ldeps[col],errors='coerce')
 ldeps = ldeps[ldeps['Mean (m)'] != 9999.0]
 ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
 ldeps['Mean (m)'] = ldeps['Mean (m)']/10
 ldeps['Max (m)'] = ldeps['Max (m)']/10
-# convert lat,lon,mean,max to float
-# ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
 
 
 # isimip grid cell lake depths
@@ -143,12 +135,17 @@ da_pct = ds['PCT_LAKE']
 da_pct = xr.where(da_pct>0,1,0)
 
 # testing some changes
-
 da_depth = da_depth.where(da_pct == 1) # only where lake pixels exist
 test_df = da_depth.to_dataframe() # convert to dataframe
 test_df = test_df.dropna() # drop nans
 test_df['GLDB_avg_mean_depth'] = np.nan # empty row for gldb data
 test_df['GLDB_avg_max_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_med_mean_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_med_max_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_q1_mean_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_q3_mean_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_q1_max_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_q3_max_depth'] = np.nan # empty row for gldb data
 test_df['number_lakes'] = np.nan
 for gp in test_df.index:
     lat = gp[0]
@@ -158,19 +155,21 @@ for gp in test_df.index:
     lon_bnd_0 = lon - 0.25
     lon_bnd_1 = lon + 0.25
     try:
-        # sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
-        #                     (ldeps['Lat'] < lat_bnd_1)&\
-        #                             (ldeps['Lon'] > lon_bnd_0)&\
-        #                                 (ldeps['Lon'] < lon_bnd_1)].mean()
         sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&(ldeps['Lat'] < lat_bnd_1)&\
                            (ldeps['Lon'] > lon_bnd_0)&(ldeps['Lon'] < lon_bnd_1)]
         sample_len = len(sample.index)
         test_df.loc[(lat,lon)]['GLDB_avg_mean_depth'] = sample['Mean (m)'].mean()
         test_df.loc[(lat,lon)]['GLDB_avg_max_depth'] = sample['Max (m)'].mean()
+        test_df.loc[(lat,lon)]['GLDB_med_mean_depth'] = sample['Mean (m)'].median()
+        test_df.loc[(lat,lon)]['GLDB_med_max_depth'] = sample['Max (m)'].median()
+        test_df.loc[(lat,lon)]['GLDB_q1_mean_depth'] = sample['Mean (m)'].quantile(0.25)
+        test_df.loc[(lat,lon)]['GLDB_q3_mean_depth'] = sample['Mean (m)'].quantile(0.75)
+        test_df.loc[(lat,lon)]['GLDB_q1_max_depth'] = sample['Max (m)'].quantile(0.25)
+        test_df.loc[(lat,lon)]['GLDB_q3_max_depth'] = sample['Max (m)'].quantile(0.75)
         test_df.loc[(lat,lon)]['number_lakes'] = sample_len
     except:
         pass
-test_df = test_df.rename({'LAKEDEPTH':'ISIMIP_gridcell_depth'}).dropna()
+test_df = test_df.rename(columns={'LAKEDEPTH':'ISIMIP_gridcell_depth'}).dropna()
 test_df.to_csv('dataframe.csv')
 test_da = xr.Dataset.from_dataframe(test_df)
 new_da = test_da.reindex_like(da_depth)
@@ -178,273 +177,4 @@ new_da['ISIMIP_gridcell_depth'].plot()
 mean_bias = new_da['ISIMIP_gridcell_depth'] - new_da['GLDB_mean']
 max_bias = new_da['ISIMIP_gridcell_depth'] - new_da['GLDB_max']
 
-# add lat/lon bounds (+1 length from lat/lon grid points) to da_depth
-# filter ldeps for non-missing depth data, lakes only, convert to meters, no 0 meters lakes
-# check length of ldeps with index and len(idx)
-# search for 
-    # pandas dataframe to data array and vice versa
-        # convert da_depth to df_depth with row for each lat/lon gridpoint combination from da_depth
-        # have column for da_depth depth points
-        # remove nan rows
-        # loop lat/lon gridpoints:
-            # loc selection from dataframe using bounds of lat/lon gridpoint:
-                # statistics on loc selection -> pipe to same gridcell on empty arrays
-                # *OR*
-                # change coords to closest ISIMIP gridpointo
-                # for every valid match, append to list for valid ISIMIP-to-ldeps gridpoints
-            # *OR* Loop ldeps dataframe, per lake:
-                # change coords to closest ISIMIP gridpoint
-                # for every valid match, append to list for valid ISIMIP-to-ldeps gridpoints
-        # After gridpoint assimilation, loop through list of valid ISIMIP-to-ldeps gridpoints
-            # "loc" to select all sample lakes per valid point, compute statistics
-            # assign value to empty data array with matching ISIMIP grid-scale
 
-
-
-
-class Rectangle:
-    pass
-
-
-class Point:
-    pass
-
-
-def move_rect(rectangle, dx, dy):
-    rectangle.corner.x = rectangle.corner.x + dx
-    rectangle.corner.y = rectangle.corner.y + dy
-
-
-box = Rectangle()
-box.width = 100
-box.height = 200
-
-box.corner = Point()
-box.corner.x = 0
-box.corner.y = 0
-
-move_rect(box, 10, 10)
-   
-
-#%%============================================================================
-
-# mod ensembles
-os.chdir(curDIR)
-from da_sr_mod_ens import *
-mod_ens,mod_ts_ens,nt = ensemble_subroutine(modDIR,
-                                            maps,
-                                            models,
-                                            exps,
-                                            var,
-                                            lu_techn,
-                                            measure,
-                                            lulcc_type,
-                                            y1,
-                                            grid,
-                                            freq,
-                                            obs_types,
-                                            continents,
-                                            ns,
-                                            fp_files,
-                                            ar6_regs)
-ts_pickler(curDIR,
-           mod_ts_ens,
-           grid,
-           t_ext,
-           obs_mod='model')
-
-#%%============================================================================
-
-# mod fingerprint (nx is dummy var not used in OLS OF)
-os.chdir(curDIR)
-from da_sr_mod_fp import *
-fp,fp_continental,fp_ar6,nx = fingerprint_subroutine(obs_types,
-                                                     grid,
-                                                     ns,
-                                                     nt,
-                                                     mod_ens,
-                                                     exps,
-                                                     models,
-                                                     ar6_regs,
-                                                     continents,
-                                                     continent_names,
-                                                     exp_list)
-
-#%%============================================================================
-
-# pi data
-os.chdir(curDIR)
-from da_sr_pi import *
-ctl_data,ctl_data_continental,ctl_data_ar6 = picontrol_subroutine(piDIR,
-                                                                  pi_files,
-                                                                  grid,
-                                                                  models,
-                                                                  obs_types,
-                                                                  continents,
-                                                                  continent_names,
-                                                                  var,
-                                                                  y1,
-                                                                  freq,
-                                                                  maps,
-                                                                  ar6_regs,
-                                                                  ns,
-                                                                  nt)
-
-#%%============================================================================
-
-# obs data
-os.chdir(curDIR)
-from da_sr_obs import *
-obs_data,obs_data_continental,obs_data_ar6,obs_ts = obs_subroutine(obsDIR,
-                                                                   grid,
-                                                                   obs_files,
-                                                                   continents,
-                                                                   continent_names,
-                                                                   obs_types,
-                                                                   models,
-                                                                   y1,
-                                                                   var,
-                                                                   maps,
-                                                                   ar6_regs,
-                                                                   freq,
-                                                                   nt,
-                                                                   ns)
-
-ts_pickler(curDIR,
-           obs_ts,
-           grid,
-           t_ext,
-           obs_mod='obs')
-
-#%%============================================================================
-# detection & attribution 
-#==============================================================================
-
-# optimal fingerprinting
-os.chdir(curDIR)
-from da_sr_of import *
-var_sfs,\
-var_ctlruns,\
-proj,\
-U,\
-yc,\
-Z1c,\
-Z2c,\
-Xc,\
-Cf1,\
-Ft,\
-beta_hat,\
-var_fin,\
-models = of_subroutine(grid,
-                       models,
-                       nx,
-                       analysis,
-                       exp_list,
-                       obs_types,
-                       obs_data,
-                       obs_data_continental,
-                       obs_data_ar6,
-                       fp,
-                       fp_continental,
-                       fp_ar6,
-                       ctl_data,
-                       ctl_data_continental,
-                       ctl_data_ar6,
-                       bs_reps,
-                       ns,
-                       nt,
-                       reg,
-                       cons_test,
-                       formule_ic_tls,
-                       trunc,
-                       ci_bnds,
-                       continents)
-# save OF results
-pickler(curDIR,
-        var_fin,
-        analysis,
-        grid,
-        t_ext,
-        exp_list)
-           
-#%%============================================================================
-# plotting scaling factors
-#==============================================================================    
-
-os.chdir(curDIR)    
-if len(exp_list) == 2:
-    
-    pass
-
-elif len(exp_list) == 1:
-    
-    start_exp = deepcopy(exp_list[0])
-    if start_exp == 'historical':
-        second_exp = 'hist-noLu'
-    elif start_exp == 'hist-noLu':
-        second_exp = 'historical'
-    pkl_file = open('var_fin_1-factor_{}_{}-grid_{}_{}.pkl'.format(second_exp,grid,analysis,t_ext),'rb')
-    var_fin_2 = pk.load(pkl_file)
-    pkl_file.close()
-    
-    for obs in obs_types:
-        for mod in models:
-            var_fin[obs][mod][second_exp] = var_fin_2[obs][mod].pop(second_exp)
-            
-    exp_list = ['historical', 'hist-noLu']
-
-if analysis == 'global':
-    
-    plot_scaling_global(models,
-                        grid,
-                        obs_types,
-                        exp_list,
-                        var_fin,
-                        flag_svplt,
-                        outDIR)
-
-elif analysis == 'continental':
-    
-    plot_scaling_continental(models,
-                             exps,
-                             var_fin,
-                             continents,
-                             continent_names,
-                             mod_ts_ens,
-                             obs_ts,
-                             flag_svplt,
-                             outDIR,
-                             lulcc_type,
-                             t_ext,
-                             freq,
-                             measure,
-                             var)
-    
-    plot_scaling_map_continental(sfDIR,
-                                 obs_types,
-                                 models,
-                                 exp_list,
-                                 continents,
-                                 var_fin,
-                                 grid,
-                                 letters,
-                                 outDIR)
-
-elif analysis == 'ar6':
-    
-    plot_scaling_map_ar6(sfDIR,
-                         obs_types,
-                         models,
-                         exp_list,
-                         continents,
-                         var_fin,
-                         grid,
-                         letters,
-                         outDIR)              
-    
-    
-         
-    
-    
-
-# %%
