@@ -134,6 +134,8 @@ ds = xr.open_dataset('pctlake.nc4')
 da_pct = ds['PCT_LAKE']
 da_pct = xr.where(da_pct>0,1,0)
 
+# testing some changes
+
 da_depth = da_depth.where(da_pct == 1) # only where lake pixels exist
 test_df = da_depth.to_dataframe() # convert to dataframe
 test_df = test_df.dropna() # drop nans
@@ -145,12 +147,15 @@ for gp in test_df.index:
     lat_bnd_1 = lat + 0.25
     lon_bnd_0 = lon - 0.25
     lon_bnd_1 = lon + 0.25
-    sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
-                           (ldeps['Lat'] < lat_bnd_1)&\
-                                (ldeps['Lon'] > lon_bnd_0)&\
-                                    (ldeps['Lon'] < lat_bnd_1)]
-    TAKE SAMPLE MEAN
-    test_df.loc[(lat,lon)]['GLDB'] = sample_mean
+    try:
+        sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
+                            (ldeps['Lat'] < lat_bnd_1)&\
+                                    (ldeps['Lon'] > lon_bnd_0)&\
+                                        (ldeps['Lon'] < lat_bnd_1)].mean()
+        test_df.loc[(lat,lon)]['GLDB'] = sample
+    except:
+        pass
+    
     
 
 # add lat/lon bounds (+1 length from lat/lon grid points) to da_depth
