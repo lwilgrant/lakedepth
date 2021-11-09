@@ -121,7 +121,15 @@ ldeps = pd.read_csv('FreshWaterLakeDepthDataSet_v2_noheader.txt',
                     names=['Lat','Lon','Mean (m)','Max (m)','Surface_area (km**2)','International_name','National_name','Country'],
                     index_col=False,
                     encoding='iso-8859-1')
-ldeps = ldeps[ldeps['Mean (m)'] != str(9999.0)]
+# ldeps = ldeps[ldeps['Mean (m)'] != str(9999.0)]
+# ldeps = ldeps[ldeps['Max (m)'] != str(9999.0)]
+for col in ['Lat','Lon','Mean (m)','Max (m)','Surface_area (km**2)']:
+    ldeps[col] = pd.to_numeric(ldeps[col],errors='coerce')
+ldeps = ldeps[ldeps['Mean (m)'] != 9999.0]
+ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
+ldeps['Mean (m)'] = ldeps['Mean (m)']/10
+ldeps['Max (m)'] = ldeps['Max (m)']/10
+# convert lat,lon,mean,max to float
 # ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
 
 
@@ -139,7 +147,9 @@ da_pct = xr.where(da_pct>0,1,0)
 da_depth = da_depth.where(da_pct == 1) # only where lake pixels exist
 test_df = da_depth.to_dataframe() # convert to dataframe
 test_df = test_df.dropna() # drop nans
-test_df['GLDB'] = np.nan # empty row for gldb data
+test_df['GLDB_avg_mean_depth'] = np.nan # empty row for gldb data
+test_df['GLDB_avg_max_depth'] = np.nan # empty row for gldb data
+test_df['number_lakes'] = np.nan
 for gp in test_df.index:
     lat = gp[0]
     lon = gp[1]
@@ -148,15 +158,25 @@ for gp in test_df.index:
     lon_bnd_0 = lon - 0.25
     lon_bnd_1 = lon + 0.25
     try:
-        sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
-                            (ldeps['Lat'] < lat_bnd_1)&\
-                                    (ldeps['Lon'] > lon_bnd_0)&\
-                                        (ldeps['Lon'] < lat_bnd_1)].mean()
-        test_df.loc[(lat,lon)]['GLDB'] = sample
+        # sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
+        #                     (ldeps['Lat'] < lat_bnd_1)&\
+        #                             (ldeps['Lon'] > lon_bnd_0)&\
+        #                                 (ldeps['Lon'] < lon_bnd_1)].mean()
+        sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&(ldeps['Lat'] < lat_bnd_1)&\
+                           (ldeps['Lon'] > lon_bnd_0)&(ldeps['Lon'] < lon_bnd_1)]
+        sample_len = len(sample.index)
+        test_df.loc[(lat,lon)]['GLDB_avg_mean_depth'] = sample['Mean (m)'].mean()
+        test_df.loc[(lat,lon)]['GLDB_avg_max_depth'] = sample['Max (m)'].mean()
+        test_df.loc[(lat,lon)]['number_lakes'] = sample_len
     except:
         pass
-    
-    
+test_df = test_df.rename({'LAKEDEPTH':'ISIMIP_gridcell_depth'}).dropna()
+test_df.to_csv('dataframe.csv')
+test_da = xr.Dataset.from_dataframe(test_df)
+new_da = test_da.reindex_like(da_depth)
+new_da['ISIMIP_gridcell_depth'].plot()
+mean_bias = new_da['ISIMIP_gridcell_depth'] - new_da['GLDB_mean']
+max_bias = new_da['ISIMIP_gridcell_depth'] - new_da['GLDB_max']
 
 # add lat/lon bounds (+1 length from lat/lon grid points) to da_depth
 # filter ldeps for non-missing depth data, lakes only, convert to meters, no 0 meters lakes
