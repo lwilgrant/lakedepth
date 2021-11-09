@@ -74,7 +74,7 @@ os.chdir(curDIR)
 
 # data input directories
 ncDIR = os.path.join(curDIR, 'netcdf')
-sfDIR = os.path.join(curDIR, 'shapefiles')
+# sfDIR = os.path.join(curDIR, 'shapefiles')
 txtDIR = os.path.join(curDIR, 'txtfiles')
 outDIR = os.path.join(curDIR, 'figures')
 
@@ -105,7 +105,7 @@ letters = ['a', 'b', 'c',
            'v', 'w', 'x',
            'y', 'z']
 
-#==============================================================================
+#%%==============================================================================
 # get data 
 #==============================================================================
 
