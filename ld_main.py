@@ -122,7 +122,7 @@ ldeps = pd.read_csv('FreshWaterLakeDepthDataSet_v2_noheader.txt',
                     index_col=False,
                     encoding='iso-8859-1')
 ldeps = ldeps[ldeps['Mean (m)'] != str(9999.0)]
-ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
+# ldeps = ldeps[ldeps['Max (m)'] != 9999.0]
 
 
 # isimip grid cell lake depths
@@ -137,8 +137,21 @@ da_pct = xr.where(da_pct>0,1,0)
 da_depth = da_depth.where(da_pct == 1) # only where lake pixels exist
 test_df = da_depth.to_dataframe() # convert to dataframe
 test_df = test_df.dropna() # drop nans
+test_df['GLDB'] = np.nan # empty row for gldb data
 for gp in test_df.index:
-
+    lat = gp[0]
+    lon = gp[1]
+    lat_bnd_0 = lat - 0.25
+    lat_bnd_1 = lat + 0.25
+    lon_bnd_0 = lon - 0.25
+    lon_bnd_1 = lon + 0.25
+    sample = ldeps.loc[(ldeps['Lat'] > lat_bnd_0)&\
+                           (ldeps['Lat'] < lat_bnd_1)&\
+                                (ldeps['Lon'] > lon_bnd_0)&\
+                                    (ldeps['Lon'] < lat_bnd_1)]
+    TAKE SAMPLE MEAN
+    test_df.loc[(lat,lon)]['GLDB'] = sample_mean
+    
 
 # add lat/lon bounds (+1 length from lat/lon grid points) to da_depth
 # filter ldeps for non-missing depth data, lakes only, convert to meters, no 0 meters lakes
